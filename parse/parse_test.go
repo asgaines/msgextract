@@ -19,6 +19,14 @@ func TestParseHeaderLines(t *testing.T) {
 			map[string]string{"Subject": "We met yesterday"},
 		},
 		{
+			[]string{""},
+			map[string]string{},
+		},
+		{
+			[]string{"Line with no header key"},
+			map[string]string{},
+		},
+		{
 			[]string{"Subject: \t \n "},
 			map[string]string{"Subject": ""},
 		},
