@@ -13,6 +13,10 @@ func MapFromHeaderLines(lines []string) map[string]string {
 	var key string
 
 	for _, line := range lines {
+		if len(line) == 0 {
+			continue
+		}
+
 		var value string
 
 		if !unicode.IsSpace(rune(line[0])) {
