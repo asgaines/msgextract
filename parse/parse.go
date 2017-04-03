@@ -17,8 +17,11 @@ func MapFromHeaderLines(lines []string) map[string]string {
 			continue
 		}
 
+		// Holds the contents to be associated with header key
 		var value string
 
+		// If line begins with whitespace, it is a continuation
+		// of previous line
 		if !unicode.IsSpace(rune(line[0])) {
 			splitIndex := strings.Index(line, ":")
 
