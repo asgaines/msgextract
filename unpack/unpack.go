@@ -37,13 +37,11 @@ func Gzip(gzippedArchivePath, targetPath string) error {
 	return err
 }
 
-func Tar(tarPath string) (error, [][]string) {
-	// Create structure to hold all maps of parsed email headers
-	var allHeaderLines [][]string
+func Tar(tarPath string, headerChan chan []string) error {
 	// Open tar file for reading
 	reader, err := os.Open(tarPath)
 	if err != nil {
-		return err, allHeaderLines
+		return err
 	}
 	defer reader.Close()
 
@@ -56,7 +54,7 @@ func Tar(tarPath string) (error, [][]string) {
 		if err == io.EOF {
 			break
 		} else if err != nil {
-			return err, allHeaderLines
+			return err
 		}
 
 		// Only handle MSG files
@@ -67,7 +65,7 @@ func Tar(tarPath string) (error, [][]string) {
 		scanner := bufio.NewScanner(tarReader)
 
 		// Initialize new slice of strings to collect lines of the header
-		var fileHeaderLines []string
+		var headerLines []string
 
 		// Load the slice with header lines
 		for scanner.Scan() {
@@ -77,19 +75,19 @@ func Tar(tarPath string) (error, [][]string) {
 				// End of header section
 				break
 			} else {
-				fileHeaderLines = append(fileHeaderLines, line)
+				headerLines = append(headerLines, line)
 			}
 		}
 
-		allHeaderLines = append(allHeaderLines, fileHeaderLines)
+		// Feed lines through channel
+		headerChan <- headerLines
 	}
 
-	return err, allHeaderLines
+	return err
 }
 
 func CreateArchiveName(tmpDir, gzippedPath string) string {
 	fileName := filepath.Base(gzippedPath)
 	return filepath.Join(tmpDir, fileName[:len(fileName) - 3])
 }
-
 

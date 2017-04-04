@@ -60,14 +60,23 @@ func main() {
 		log.Fatal(err)
 	}
 
-	err, headerLines := unpack.Tar(archivePath)
-	if err != nil {
-		log.Fatal(err)
-	}
+	// Channel to be fed the email header lines as they are
+	// processed by tar function
+	headerChan := make(chan []string)
 
+	go func() {
+		err = unpack.Tar(archivePath, headerChan)
+		if err != nil {
+			log.Fatal(err)
+		}
+		// Close the channel, releasing the blockage
+		close(headerChan)
+	}()
+
+	// Parse through the header lines received through channel
 	var parsedHeaders []map[string]string
-	for _, lines := range headerLines {
-		parsedHeaders = append(parsedHeaders, parse.MapFromHeaderLines(lines))
+	for headers := range headerChan {
+		parsedHeaders = append(parsedHeaders, parse.MapFromHeaderLines(headers))
 	}
 
 	output.WriteFields(outputPath, parsedHeaders, fields, outputFormat)
