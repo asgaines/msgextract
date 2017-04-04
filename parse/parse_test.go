@@ -1,9 +1,16 @@
 package parse
 
 import (
+	"log"
 	"testing"
 	"reflect"
+	"io/ioutil"
 )
+
+func init() {
+	// Deactivate the logging of requests to screen
+	log.SetOutput(ioutil.Discard)
+}
 
 func TestParseHeaderLines(t *testing.T) {
 	cases := []struct {
