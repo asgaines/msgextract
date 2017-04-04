@@ -15,6 +15,7 @@ func TestUnGzipCreatesArchive(t *testing.T) {
 	if err != nil {
 		t.Error(err)
 	}
+	defer os.RemoveAll(tmpDir)
 
 	// Target path where contents of file to be stored 
 	// after unpacking
@@ -231,6 +232,7 @@ func TestCreateArchiveName(t *testing.T) {
 	if err != nil {
 		t.Error(err)
 	}
+	defer os.RemoveAll(tmpDir)
 
 	cases := []struct {
 		in string
