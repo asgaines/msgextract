@@ -38,11 +38,24 @@ func main() {
 		os.Exit(1)
 	}
 
-	gzippedArchivePath := os.Args[1]
-	archivePath := unpack.CreateArchiveName(gzippedArchivePath)
-	outputPath := os.Args[2]
+	// Guard against invalid output file formats
+	if !ValidFormats[outputFormat] {
+		flag.Usage()
+		os.Exit(1)
+	}
 
-	err := unpack.Gzip(gzippedArchivePath, archivePath)
+	gzippedArchivePath := posArgs[0]
+
+	tmpDir, err := ioutil.TempDir(".", "tmp")
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer os.RemoveAll(tmpDir)
+
+	archivePath := unpack.CreateArchiveName(tmpDir, gzippedArchivePath)
+	outputPath := posArgs[1]
+
+	err = unpack.Gzip(gzippedArchivePath, archivePath)
 	if err != nil {
 		log.Fatal(err)
 	}

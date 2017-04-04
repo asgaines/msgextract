@@ -7,6 +7,7 @@ import (
 	"strings"
 	"compress/gzip"
 	"archive/tar"
+	"path/filepath"
 )
 
 func Gzip(gzippedArchivePath, targetPath string) error {
@@ -86,8 +87,9 @@ func Tar(tarPath string) (error, [][]string) {
 	return err, allHeaderLines
 }
 
-func CreateArchiveName(gzippedPath string) string {
-	return gzippedPath[:len(gzippedPath) - 3]
+func CreateArchiveName(tmpDir, gzippedPath string) string {
+	fileName := filepath.Base(gzippedPath)
+	return filepath.Join(tmpDir, fileName[:len(fileName) - 3])
 }
 
 

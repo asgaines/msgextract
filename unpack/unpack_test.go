@@ -4,32 +4,30 @@ import (
 	"testing"
 	"os"
 	"reflect"
+	"io/ioutil"
 	"path/filepath"
 )
 
-func TestUnGzippedArchiveDoesNotYetExist(t *testing.T) {
+func TestUnGzipCreatesArchive(t *testing.T) {
+	fileName := "testEmails.tar.gz"
 	unGzipDir := "../test_files/targzs"
+	tmpDir, err := ioutil.TempDir("../test_files", "tmp")
+	if err != nil {
+		t.Error(err)
+	}
 
 	// Target path where contents of file to be stored 
 	// after unpacking
-	unzippedPath := filepath.Join(unGzipDir, "testEmails.tar")
+	unzippedPath := CreateArchiveName(tmpDir, fileName)
+	// Gzipped filename will be same as unzipped archive with
+	// .gz extension added
+	zippedPath := filepath.Join(unGzipDir, fileName)
 
 	// Ensure unpacked tar file does not yet exist
 	if _, err := os.Open(unzippedPath); !os.IsNotExist(err) {
 		// The file exists
 		t.Errorf("Unzipped file already exists: %v", unzippedPath)
 	}
-}
-
-func TestUnGzipCreatesArchive(t *testing.T) {
-	unGzipDir := "../test_files/targzs"
-
-	// Target path where contents of file to be stored 
-	// after unpacking
-	unzippedPath := filepath.Join(unGzipDir, "testEmails.tar")
-	// Gzipped filename will be same as unzipped archive with
-	// .gz extension added
-	zippedPath := unzippedPath + ".gz"
 
 	Gzip(zippedPath, unzippedPath)
 
