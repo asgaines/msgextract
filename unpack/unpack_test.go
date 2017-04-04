@@ -125,17 +125,23 @@ func TestTar(t *testing.T) {
 }
 
 func TestCreateArchiveName(t *testing.T) {
+	tmpDir, err := ioutil.TempDir("../test_files", "tmp")
+	if err != nil {
+		t.Error(err)
+	}
+
 	cases := []struct {
 		in string
 		want string
 	}{
-		{"test.tar.gz", "test.tar"},
-		{"t.tar.gz", "t.tar"},
-		{"test.tar.gz.gz", "test.tar.gz"},
+		{"test.tar.gz", filepath.Join(tmpDir, "test.tar")},
+		{"a/long/path/to/test.tar.gz", filepath.Join(tmpDir, "test.tar")},
+		{"t.tar.gz", filepath.Join(tmpDir, "t.tar")},
+		{"test.tar.gz.gz", filepath.Join(tmpDir, "test.tar.gz")},
 	}
 
 	for _, c := range cases {
-		if out := CreateArchiveName(c.in); out != c.want {
+		if out := CreateArchiveName(tmpDir, c.in); out != c.want {
 			t.Errorf("%v returned %v, wanted %v", c.in, out, c.want)
 		}
 	}
