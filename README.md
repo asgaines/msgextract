@@ -8,7 +8,7 @@ Parse through gzipped tar archive and output the desired header information to f
 
 ## Installation
 
-- Install [Go v1.8](https://golang.org/doc/install)
+- Install [Go](https://golang.org/doc/install)
 - `go get -u github.com/asgaines/msgextract/...`
 
 ## Usage
